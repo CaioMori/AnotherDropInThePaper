@@ -67,7 +67,6 @@ function App(): React.JSX.Element {
             <Text style={styles.cardTitle}>Resultado</Text>
           </View>
         </ScrollView>
-
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Começar Agora</Text>
         </TouchableOpacity>
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     color: '#FFD700',
-    marginBottom: 16,
+    fontWeight: '600',
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -136,10 +135,11 @@ const styles = StyleSheet.create({
     color: '#1A1A2E',
   },
   previewImage: {
-    width: 260,
+    width: 760,
     height: 260,
     borderRadius: 16,
     marginTop: 16,
+    aspectRatio: 1,
   },
 });
 
