@@ -1,117 +1,145 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  TouchableOpacity,
+  ScrollView,
+  Image,
 } from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+function App(): React.JSX.Element {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  const handleSelectImage = async () => {
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+      });
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+      if (result.didCancel) {
+        console.log('Seleção de imagem cancelada');
+      } else if (result.assets && result.assets.length > 0) {
+        // Pegue a primeira imagem selecionada
+        const uri = result.assets[0].uri;
+        if (uri) {
+          setSelectedImage(uri);
+        }
+      }
+    } catch (error) {
+      console.log('Erro ao selecionar imagem:', error);
+    }
+  };
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.flex}>
+        <StatusBar barStyle="light-content" />
+
+        <View style={styles.header}>
+          <Text style={styles.title}>ADIP</Text>
+          <Text style={styles.subtitle}>Leitor de papel hidrossensível</Text>
+        </View>
+
+        <ScrollView>
+          <TouchableOpacity style={styles.card} onPress={handleSelectImage}>
+            <Text style={styles.cardTitle}>Carregar Imagem</Text>
+          </TouchableOpacity>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Imagem</Text>
+            {selectedImage ? (
+              <Image
+                source={{uri: selectedImage}}
+                style={styles.previewImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text style={styles.cardText}>Nenhuma imagem selecionada</Text>
+            )}
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Resultado</Text>
+          </View>
+        </ScrollView>
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Começar Agora</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     </View>
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    backgroundColor: '#1A1A2E',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  flex: {
+    flex: 1,
   },
-  sectionDescription: {
-    marginTop: 8,
+  header: {
+    padding: 24,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 8,
+  },
+  subtitle: {
     fontSize: 18,
-    fontWeight: '400',
+    color: '#FFD700',
+    marginBottom: 16,
   },
-  highlight: {
-    fontWeight: '700',
+  card: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    padding: 20,
+    margin: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+    justifyContent: 'flex-start',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFF',
+    marginRight: 10,
+  },
+  cardText: {
+    fontSize: 14,
+    color: '#DDD',
+  },
+  button: {
+    backgroundColor: '#FFD700',
+    borderRadius: 30,
+    paddingVertical: 15,
+    marginHorizontal: 32,
+    marginBottom: 30,
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1A1A2E',
+  },
+  previewImage: {
+    width: 260,
+    height: 260,
+    borderRadius: 16,
+    marginTop: 16,
   },
 });
 
