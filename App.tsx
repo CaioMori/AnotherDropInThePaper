@@ -24,7 +24,6 @@ function App(): React.JSX.Element {
       if (result.didCancel) {
         console.log('Seleção de imagem cancelada');
       } else if (result.assets && result.assets.length > 0) {
-        // Pegue a primeira imagem selecionada
         const uri = result.assets[0].uri;
         if (uri) {
           setSelectedImage(uri);
